@@ -1,0 +1,10 @@
+{
+  "schedules": [],
+  "history": [],
+  "settings": {
+    "device_id": "PF001",
+    "pet_name": "Kucing",
+    "default_amount": 50,
+    "low_food_alert": 20
+  }
+}

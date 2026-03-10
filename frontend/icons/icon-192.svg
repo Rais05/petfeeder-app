@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192" width="192" height="192">
+  <!-- Background gradient -->
+  <defs>
+    <linearGradient id="grad-192" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#8b5cf6;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#06b6d4;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Rounded rect background -->
+  <rect x="0" y="0" width="192" height="192" rx="40" fill="url(#grad-192)"/>
+  
+  <!-- Paw prints -->
+  <!-- Main pad -->
+  <ellipse cx="96" cy="110" rx="22" ry="26" fill="#ffffff" opacity="0.9"/>
+  
+  <!-- Top left toe -->
+  <ellipse cx="65" cy="72" rx="14" ry="18" fill="#ffffff" opacity="0.9"/>
+  
+  <!-- Top middle-left toe -->
+  <ellipse cx="85" cy="58" rx="14" ry="18" fill="#ffffff" opacity="0.9"/>
+  
+  <!-- Top middle-right toe -->
+  <ellipse cx="107" cy="58" rx="14" ry="18" fill="#ffffff" opacity="0.9"/>
+  
+  <!-- Top right toe -->
+  <ellipse cx="127" cy="72" rx="14" ry="18" fill="#ffffff" opacity="0.9"/>
+</svg>

@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PWA Icon Generator - PetFeeder IoT</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      background: #0a0d1a;
+      color: #fff;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+    canvas {
+      border: 1px solid #ccc;
+      background: #fff;
+      max-width: 100%;
+    }
+    button {
+      padding: 10px 20px;
+      margin: 10px 0;
+      background: #8b5cf6;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+    button:hover {
+      background: #7c3aed;
+    }
+    .info {
+      background: rgba(255,255,255,0.1);
+      padding: 15px;
+      border-radius: 8px;
+      margin: 10px 0;
+    }
+    .svg-notice {
+      background: rgba(34, 197, 94, 0.15);
+      border: 1px solid rgba(34, 197, 94, 0.3);
+      padding: 15px;
+      border-radius: 8px;
+      color: #86efac;
+      margin: 10px 0;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>🐾 PetFeeder PWA Icon Generator</h1>
+  
+  <div class="svg-notice">
+    <strong>✅ SVG Icons Available!</strong><br>
+    SVG icon files sudah tersedia di folder ini (icon-192.svg, icon-512.svg).<br>
+    Anda dapat menggunakan tool online untuk convert SVG → PNG, atau ikuti langkah di bawah untuk generate sendiri.
+  </div>
+  
+  <div class="info">
+    <p><strong>Opsi 1: Gunakan Tool Online (Rekomendasi)</strong></p>
+    <ol>
+      <li>Buka: <a href="https://convertio.co/svg-png/" target="_blank">Convertio SVG to PNG</a> atau <a href="https://cloudconvert.com/svg-to-png" target="_blank">CloudConvert</a></li>
+      <li>Upload file <code>icon-192.svg</code> atau <code>icon-512.svg</code></li>
+      <li>Download hasil PNG ke folder <code>icons/</code></li>
+    </ol>
+    
+    <p><strong>Opsi 2: Generate Dengan Canvas (langkah di bawah)</strong></p>
+    <ol>
+      <li>Klik tombol untuk generate icon 192x192</li>
+      <li>Right-click → Save image as <code>icon-192.png</code> ke folder <code>icons/</code></li>
+      <li>Generate icon 512x512</li>
+      <li>Right-click → Save image as <code>icon-512.png</code> ke folder <code>icons/</code></li>
+    </ol>
+  </div>
+
+  <div class="container">
+    <!-- Icon 192x192 -->
+    <div>
+      <h2>Icon 192x192</h2>
+      <canvas id="canvas-192" width="192" height="192"></canvas>
+      <button onclick="downloadIcon(192)">📥 Download 192x192</button>
+    </div>
+
+    <!-- Icon 512x512 -->
+    <div>
+      <h2>Icon 512x512</h2>
+      <canvas id="canvas-512" width="512" height="512"></canvas>
+      <button onclick="downloadIcon(512)">📥 Download 512x512</button>
+    </div>
+  </div>
+
+  <script>
+    function drawIcon(size) {
+      const canvas = document.getElementById(`canvas-${size}`);
+      const ctx = canvas.getContext('2d');
+      
+      // Background gradient
+      const gradient = ctx.createLinearGradient(0, 0, size, size);
+      gradient.addColorStop(0, '#8b5cf6');
+      gradient.addColorStop(1, '#06b6d4');
+      ctx.fillStyle = gradient;
+      ctx.fillRect(0, 0, size, size);
+      
+      // Border radius effect
+      ctx.fillStyle = gradient;
+      ctx.beginPath();
+      ctx.roundRect(0, 0, size, size, size * 0.15);
+      ctx.fill();
+      
+      // Draw paw emoji as text
+      ctx.font = `${size * 0.6}px Arial`;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillStyle = '#fff';
+      
+      // Add shadow effect
+      ctx.shadowColor = 'rgba(0,0,0,0.3)';
+      ctx.shadowBlur = size * 0.05;
+      ctx.shadowOffsetX = 0;
+      ctx.shadowOffsetY = size * 0.02;
+      
+      ctx.fillText('🐾', size / 2, size / 2);
+    }
+
+    function downloadIcon(size) {
+      const canvas = document.getElementById(`canvas-${size}`);
+      const link = document.createElement('a');
+      link.href = canvas.toDataURL('image/png');
+      link.download = `icon-${size}.png`;
+      link.click();
+    }
+
+    // Draw icons on load
+    window.addEventListener('load', () => {
+      drawIcon(192);
+      drawIcon(512);
+    });
+
+    // Update icons if needed
+    setTimeout(() => {
+      drawIcon(192);
+      drawIcon(512);
+    }, 100);
+  </script>
+
+</body>
+</html>

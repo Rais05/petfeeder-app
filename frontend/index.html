@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>PetFeeder IoT — Control Panel</title>
+  <meta name="description"
+    content="Dashboard kontrol pemberi makan hewan peliharaan berbasis IoT. Feeding manual, jadwal otomatis, dan monitoring real-time." />
+
+  <!-- ── PWA ──────────────────────────────────────── -->
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#8b5cf6" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="PetFeeder" />
+  <link rel="apple-touch-icon" href="icons/icon-192.png" />
+  <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png" />
+  <link rel="icon" type="image/png" sizes="512x512" href="icons/icon-512.png" />
+
+  <!-- ── Fonts ─────────────────────────────────────── -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+
+  <!-- ── Register Service Worker ───────────────────── -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js')
+          .then(reg => console.log('[PWA] Service Worker registered:', reg.scope))
+          .catch(err => console.warn('[PWA] SW registration failed:', err));
+      });
+    }
+  </script>
+</head>
+
+<body>
+
+  <!-- ── Animated Background ───────────────────────── -->
+  <div class="bg-orbs">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+  </div>
+
+  <!-- ── App Container ─────────────────────────────── -->
+  <div class="app-container">
+
+    <!-- ── Header ──────────────────────────────────── -->
+    <header class="app-header">
+      <div class="header-left">
+        <div class="logo">
+          <span class="logo-icon">🐾</span>
+          <div>
+            <h1 class="logo-title">PetFeeder</h1>
+            <p class="logo-sub">IoT Control Panel</p>
+          </div>
+        </div>
+      </div>
+      <div class="header-right">
+        <div class="device-badge" id="device-badge">
+          <span class="badge-dot" id="badge-dot"></span>
+          <span id="badge-text">Menghubungkan...</span>
+        </div>
+        <div class="pet-name-pill" id="pet-name-pill">🐱 Kucing</div>
+      </div>
+    </header>
+
+    <!-- ── Main Grid ────────────────────────────────── -->
+    <main class="main-grid">
+
+      <!-- ── Col 1: Status + Feed Button ──────────── -->
+      <div class="col-left">
+
+        <!-- Status Cards -->
+        <div class="status-row">
+          <div class="stat-card glass" id="card-food">
+            <div class="stat-icon">🍽️</div>
+            <div class="stat-body">
+              <div class="stat-label">Sisa Makanan</div>
+              <div class="stat-value" id="stat-food">—</div>
+            </div>
+            <div class="stat-trend" id="food-trend"></div>
+          </div>
+          <div class="stat-card glass" id="card-count">
+            <div class="stat-icon">📊</div>
+            <div class="stat-body">
+              <div class="stat-label">Makan Hari Ini</div>
+              <div class="stat-value" id="stat-count">—</div>
+            </div>
+          </div>
+          <div class="stat-card glass" id="card-last">
+            <div class="stat-icon">🕐</div>
+            <div class="stat-body">
+              <div class="stat-label">Terakhir Makan</div>
+              <div class="stat-value small" id="stat-last">Belum ada</div>
+            </div>
+          </div>
+          <div class="stat-card glass" id="card-wifi">
+            <div class="stat-icon">📶</div>
+            <div class="stat-body">
+              <div class="stat-label">Sinyal WiFi</div>
+              <div class="stat-value" id="stat-wifi">—</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Food Level Gauge -->
+        <div class="card glass food-gauge-card">
+          <div class="card-header">
+            <h2 class="card-title">Level Makanan</h2>
+            <span class="card-badge" id="food-status-badge">—</span>
+          </div>
+          <div class="gauge-container">
+            <div class="gauge-track">
+              <div class="gauge-fill" id="gauge-fill"></div>
+              <div class="gauge-label-inside" id="gauge-percent">0%</div>
+            </div>
+            <div class="gauge-ticks">
+              <span>0%</span><span>25%</span><span>50%</span><span>75%</span><span>100%</span>
+            </div>
+          </div>
+          <div class="gauge-warning" id="gauge-warning" style="display:none">
+            ⚠️ Makanan hampir habis! Segera isi ulang.
+          </div>
+        </div>
+
+        <!-- Feed Now Card -->
+        <div class="card glass feed-card">
+          <div class="card-header">
+            <h2 class="card-title">Beri Makan Sekarang</h2>
+          </div>
+          <div class="feed-controls">
+            <div class="amount-selector">
+              <label class="amount-label">Porsi (gram)</label>
+              <div class="amount-buttons">
+                <button class="amount-btn" data-amount="25" id="amt-25">25g</button>
+                <button class="amount-btn active" data-amount="50" id="amt-50">50g</button>
+                <button class="amount-btn" data-amount="100" id="amt-100">100g</button>
+                <button class="amount-btn" data-amount="150" id="amt-150">150g</button>
+              </div>
+              <div class="amount-custom">
+                <input type="range" id="amount-slider" min="10" max="300" value="50" step="5" />
+                <span id="amount-display">50g</span>
+              </div>
+            </div>
+            <button class="feed-btn" id="feed-btn">
+              <span class="feed-btn-icon">🐱</span>
+              <span class="feed-btn-text">Beri Makan!</span>
+              <div class="feed-btn-ripple" id="feed-ripple"></div>
+            </button>
+          </div>
+          <div class="feed-status" id="feed-status"></div>
+        </div>
+
+      </div><!-- /col-left -->
+
+      <!-- ── Col 2: Schedule + History ─────────────── -->
+      <div class="col-right">
+
+        <!-- Schedule Card -->
+        <div class="card glass schedule-card">
+          <div class="card-header">
+            <h2 class="card-title">Jadwal Pemberian Makan</h2>
+            <button class="btn-add" id="btn-add-schedule">+ Tambah</button>
+          </div>
+
+          <!-- Add Schedule Form (hidden) -->
+          <div class="schedule-form glass-inner" id="schedule-form" style="display:none">
+            <div class="form-row">
+              <div class="form-group">
+                <label>Jam</label>
+                <input type="number" id="sch-hour" min="0" max="23" value="7" />
+              </div>
+              <div class="form-group">
+                <label>Menit</label>
+                <input type="number" id="sch-minute" min="0" max="59" value="0" />
+              </div>
+              <div class="form-group">
+                <label>Porsi (g)</label>
+                <input type="number" id="sch-amount" min="10" max="300" value="50" />
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Label</label>
+              <input type="text" id="sch-label" placeholder="Makan Pagi, Makan Sore, ..." />
+            </div>
+            <div class="form-group">
+              <label>Hari Aktif</label>
+              <div class="day-picker" id="day-picker">
+                <button class="day-btn active" data-day="Mon">Sen</button>
+                <button class="day-btn active" data-day="Tue">Sel</button>
+                <button class="day-btn active" data-day="Wed">Rab</button>
+                <button class="day-btn active" data-day="Thu">Kam</button>
+                <button class="day-btn active" data-day="Fri">Jum</button>
+                <button class="day-btn active" data-day="Sat">Sab</button>
+                <button class="day-btn active" data-day="Sun">Min</button>
+              </div>
+            </div>
+            <div class="form-actions">
+              <button class="btn-secondary" id="btn-cancel-schedule">Batal</button>
+              <button class="btn-primary" id="btn-save-schedule">💾 Simpan Jadwal</button>
+            </div>
+          </div>
+
+          <!-- Schedule List -->
+          <div class="schedule-list" id="schedule-list">
+            <div class="empty-state" id="schedule-empty">
+              <span>📅</span>
+              <p>Belum ada jadwal. Tambah sekarang!</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- History Card -->
+        <div class="card glass history-card">
+          <div class="card-header">
+            <h2 class="card-title">Riwayat Pemberian Makan</h2>
+            <button class="btn-refresh" id="btn-refresh-history" title="Refresh">↻</button>
+          </div>
+          <div class="history-list" id="history-list">
+            <div class="empty-state" id="history-empty">
+              <span>📋</span>
+              <p>Belum ada riwayat pemberian makan</p>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /col-right -->
+
+    </main><!-- /main-grid -->
+
+  </div><!-- /app-container -->
+
+  <!-- ── Toast Notifications ─────────────────────── -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <!-- ── Feeding Animation Overlay ──────────────── -->
+  <div class="feeding-overlay" id="feeding-overlay" style="display:none">
+    <div class="feeding-anim">
+      <div class="feeding-bowl">🥣</div>
+      <div class="feeding-drops">
+        <span class="drop">🟡</span>
+        <span class="drop">🟠</span>
+        <span class="drop">🟡</span>
+      </div>
+      <div class="feeding-cat">🐱</div>
+      <p class="feeding-text">Sedang memberi makan...</p>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+
+</html>

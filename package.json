@@ -1,0 +1,19 @@
+{
+  "name": "petfeeder-app",
+  "version": "1.0.0",
+  "description": "IoT Smart Pet Feeder Application",
+  "main": "index.js",
+  "scripts": {
+    "start": "python backend/main.py",
+    "build": "npx cap build android",
+    "sync": "npx cap sync android"
+  },
+  "keywords": ["petfeeder", "iot", "mobile"],
+  "author": "Muhammad Rais Kamil",
+  "license": "MIT",
+  "devDependencies": {
+    "@capacitor/android": "^6.0.0",
+    "@capacitor/cli": "^6.0.0",
+    "@capacitor/core": "^6.0.0"
+  }
+}
