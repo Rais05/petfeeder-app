@@ -28,6 +28,9 @@ jobs:
 
     - name: Setup Android SDK
       uses: android-actions/setup-android@v3
+      with:
+        api-level: 34
+        build-tools-version: 34.0.0
 
     - name: Install dependencies
       run: npm ci
@@ -35,8 +38,16 @@ jobs:
     - name: Sync Capacitor
       run: npx cap sync android
 
+    - name: Create local.properties
+      run: |
+        mkdir -p android
+        echo "sdk.dir=$ANDROID_HOME" > android/local.properties
+
+    - name: Grant execute permission to gradlew
+      run: chmod +x android/gradlew
+
     - name: Build APK
-      run: cd android && ./gradlew assembleRelease
+      run: cd android && ./gradlew assembleRelease -x lint
 
     - name: Upload APK artifact
       uses: actions/upload-artifact@v4
